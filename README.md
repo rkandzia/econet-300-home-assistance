@@ -58,7 +58,6 @@ Integracja udostępnia następujące sensory:
 Pobierz pliki z tego repozytorium:
 - `econet.yaml` - konfiguracja sensorów
 - `secrets.yaml` - przykładowa konfiguracja sekretów
-- `screen.png` - przykładowa wizualizacja danych
 
 ### 2. Konfiguracja Home Assistant
 
