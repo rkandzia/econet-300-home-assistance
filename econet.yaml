@@ -1,0 +1,489 @@
+#
+# Econet
+#
+- platform: rest
+  name: mode
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mode"] }}'
+  scan_interval: 10
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    tryb_pracy_pieca:
+      friendly_name: "Tryb"
+      value_template: >-
+        {% if is_state('sensor.mode', '0') %}
+        Wyłączony
+        {% elif is_state('sensor.mode','2') %}
+        Rozpalanie
+        {% elif is_state('sensor.mode','3') %}
+        Praca
+        {% elif is_state('sensor.mode','5') %}
+        Postój
+        {% elif is_state('sensor.mode','6') %}
+        Czyszczenie
+        {% elif is_state('sensor.mode','7') %}
+        Wygaszanie
+        {% elif is_state('sensor.mode','23') %}
+        Rozżarzanie
+        {% else %}
+        Nieznany
+        {% endif %}
+
+- platform: rest
+  name: "Moc kotła"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["boilerPowerKW"]|round(1) }}'
+  scan_interval: 30
+  unit_of_measurement: 'kW'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Poziom paliwa"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["fuelLevel"] }}'
+  scan_interval: 60
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Podawanie"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["fuelStream"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: 'kg/h'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Nadmuch"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["fanPower"]|round(0) }}'
+  scan_interval: 60
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Płomień"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempOpticalSensor"]|round(0) }}'
+  scan_interval: 10
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura kotła"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempCO"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura kotła - zadana"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempCOSet"] }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura powrótu"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempBack"]|round(1) }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura MIX 1"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerTemp1"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura MIX 1 - zadana"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerSetTemp1"] }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: pumpMix1
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerPumpWorks1"] }}'
+  scan_interval: 60
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    pompa_mix_1:
+      friendly_name: "Pompa mieszacz 1"
+      value_template: >-
+        {% if is_state('sensor.pumpMix1', 'False') %}
+        Wyłączona
+        {% else %}
+        Włączona
+        {% endif %}
+        
+- platform: rest
+  name: "Położenie zaworu mieszacza 1"
+  resource: http://[IP]/econet/regParamsData
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["data"]["134"] }}'
+  scan_interval: 30
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Termostat pokojowy mieszacza 1"
+  resource: http://[IP]/econet/regParamsData
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["data"]["126"] }}'
+  scan_interval: 30
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+    
+- platform: rest
+  name: "Temperatura MIX 2"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerTemp2"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura MIX 2 - zadana"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerSetTemp2"] }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: pumpMix2
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["mixerPumpWorks2"] }}'
+  scan_interval: 60
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    pompa_mix_2:
+      friendly_name: "Pompa mieszacz 2"
+      value_template: >-
+        {% if is_state('sensor.pumpMix2', 'False') %}
+        Wyłączona
+        {% else %}
+        Włączona
+        {% endif %}
+        
+- platform: rest
+  name: "Położenie zaworu mieszacza 2"
+  resource: http://[IP]/econet/regParamsData
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["data"]["135"] }}'
+  scan_interval: 30
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+    
+- platform: rest
+  name: "Termostat pokojowy mieszacza 2"
+  resource: http://[IP]/econet/regParamsData
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["data"]["127"] }}'
+  scan_interval: 30
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+    
+- platform: rest
+  name: "Temperatura CWU"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempCWU"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura CWU - zadana"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempCWUSet"] }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura podajnika"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempFeeder"]|round(2) }}'
+  scan_interval: 60
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: pumpCOWorks
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["pumpCOWorks"] }}'
+  scan_interval: 60
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    pompa_co:
+      friendly_name: "Pompa kotła"
+      value_template: >-
+        {% if is_state('sensor.pumpCOWorks', 'False') %}
+        Wyłączona
+        {% else %}
+        Włączona
+        {% endif %}
+
+- platform: rest
+  name: pumpCWUWorks
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["pumpCWUWorks"] }}'
+  scan_interval: 60
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    pompa_cwu:
+      friendly_name: "Pompa CWU"
+      value_template: >-
+        {% if is_state('sensor.pumpCWUWorks', 'False') %}
+        Wyłączona
+        {% else %}
+        Włączona
+        {% endif %}
+
+- platform: rest
+  name: pumpCirculationWorks
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["pumpCirculationWorks"] }}'
+  scan_interval: 60
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    pompa_cyrkulacyjna:
+      friendly_name: "Pompa cyrkulacyjna"
+      value_template: >-
+        {% if is_state('sensor.pumpCirculationWorks', 'False') %}
+        Wyłączona
+        {% else %}
+        Włączona
+        {% endif %}
+
+- platform: rest
+  name: "Temperatura termostatu pokojowego"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["ecoSterTemp1"]|round(1) }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura termostatu pokojowego - zadana"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["ecoSterSetTemp1"]|round(1) }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: "Temperatura zewnętrzna"
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["tempExternalSensor"]|round(2) }}'
+  scan_interval: 15
+  unit_of_measurement: '°C'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+        
+- platform: rest
+  name: "Zapełnienie popelnika"
+  resource: http://[IP]/econet/regParamsData
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["data"]["221"] }}'
+  scan_interval: 30
+  unit_of_measurement: '%'
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: rest
+  name: room_thermostat_mode
+  resource: http://[IP]/econet/regParams
+  authentication: basic
+  username: !secret econet_username
+  password: !secret econet_password
+  value_template: '{{ value_json["curr"]["ecoSterMode1"] }}'
+  scan_interval: 10
+  headers:
+    User-Agent: Mozilla/5.0
+    Content-Type: application/json
+
+- platform: template
+  sensors:
+    room_thermostat_mode_name:
+      friendly_name: "Tryb pracy termostatu pokojowego"
+      # entity_id: sensor.room_thermostat_mode
+      value_template: >-
+        {% if is_state('sensor.room_thermostat_mode', '0') %}
+        Tryb harmonogram
+        {% elif is_state('sensor.room_thermostat_mode','1') %}
+        Noc
+        {% elif is_state('sensor.room_thermostat_mode','2') %}
+        Dzień
+        {% elif is_state('sensor.room_thermostat_mode','3') %}
+        Tryb wyłączony
+        {% elif is_state('sensor.room_thermostat_mode','4') %}
+        Tryb wietrzenie
+        {% elif is_state('sensor.room_thermostat_mode','5') %}
+        Grzej teraz
+        {% elif is_state('sensor.room_thermostat_mode','6') %}
+        Tryb wakacje
+        {% elif is_state('sensor.room_thermostat_mode','7') %}
+        Tryb przeciwzamrożeniowy
+        {% elif is_state('sensor.room_thermostat_mode','133') %}
+        Tryb grzej teraz
+        {% else %}
+        Nieznany
+        {% endif %}
