@@ -7,12 +7,10 @@ Integracja umożliwiająca monitorowanie parametrów kotła Kostrzewa wyposażon
 EcoNET 300 to zaawansowany moduł komunikacyjny, umożliwiający zarządzanie pracą sterowników zainstalowanych w kotłach Kostrzewa. Dzięki niemu możemy:
 
 - **Zdalnie monitorować** parametry pracy kotła przez telefon, tablet lub komputer
-- **Kontrolować pracę kotła** za pomocą aplikacji ecoNET App (iOS/Android) lub przez stronę www.4pellet.pl
+- **Kontrolować pracę kotła** za pomocą aplikacji ecoNET App (iOS/Android) lub przez stronę
 - **Analizować zużycie paliwa** i koszty ogrzewania
 - **Otrzymywać powiadomienia** o awariach i problemach
 - **Umożliwić serwisowi** zdalną diagnostykę urządzenia
-
-Więcej informacji: [Moduł internetowy EcoNET 300](https://www.kostrzewa.com.pl/blog/modul-internetowy-econet-300-dla-inteligentnego-zarzadzania-cieplem)
 
 ## Monitorowane parametry
 
@@ -131,7 +129,7 @@ Integracja korzysta z dwóch głównych endpointów:
 - Sprawdź, czy moduł nie blokuje połączeń z Home Assistant
 
 ### Niedostępność niektórych parametrów
-- Nie wszystkie kotły Kostrzewa mają identyczne zestawy sensorów
+- Nie wszystkie kotły mają identyczne zestawy sensorów
 - Niektóre parametry mogą być niedostępne w zależności od konfiguracji kotła
 - Można skomentować lub usunąć sensory, które nie działają w danej konfiguracji
 
